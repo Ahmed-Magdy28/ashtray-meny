@@ -3,11 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 import uuid
-
 from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from django.contrib.auth import get_user_model
 from validators import validate_image_size, validate_password_strength
-
 
 
 
@@ -77,7 +75,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                                     validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])  # Validator for image file types.
     user_age = models.IntegerField(null=True, blank=True)  # Optional field for user age.
     wish_list = models.JSONField(default=list)  # JSON field for storing user wishlist items.
-    address = models.JSONField(default=list)  # JSON field for storing user addresses.
+    default_address = models.CharField(max_length=255, blank=True, null=True, help_text="Optional field for default user address")  # Optional field for default user address.
+    addresses = models.JSONField(default=list)  # JSON field for storing user addresses.
     created_in = models.DateTimeField(default=timezone.now)  # Timestamp for when the user was created.
     orders_completed = models.IntegerField(default=0)  # Field for completed orders count.
     orders_now = models.IntegerField(default=0)  # Field for current orders count.
@@ -109,8 +108,6 @@ class Shop(models.Model):
     shop_owner = models.ForeignKey(User, related_name='owned_shops', on_delete=models.CASCADE)  # Foreign key to the User model.
     shop_image = models.ImageField(upload_to='shops/', blank=True, null=True,  # Field for shop image.
                                     validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])  # Validator for image file types.
-    shop_logo = models.ImageField(upload_to='shop_logos/', blank=True, null=True,  # Field for shop logo.
-                                   validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])  # Validator for image file types.
     shop_background_image = models.ImageField(upload_to='shop_backgrounds/', blank=True, null=True,  # Field for shop background image.
                                                validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])  # Validator for image file types.
     shop_identity_colors = models.JSONField(default=list, blank=True, null=True, help_text="A list of up to 3 colors representing the shop's identity.")  # JSON field for shop identity colors.
@@ -119,16 +116,16 @@ class Shop(models.Model):
     shop_views = models.IntegerField(default=0)  # Field for tracking shop views.
     shop_reviews_is_on = models.BooleanField(default=True)  # Boolean field indicating if reviews are allowed.
     monthly_sold_items = models.IntegerField(default=0)  # Field for tracking items sold this month.
-    profit_this_month = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Decimal field for current month's profit.
-    profit_last_month = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Decimal field for last month's profit.
-    profit_this_year = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Decimal field for current year's profit.
+    sales_this_month = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Decimal field for current month's profit.
+    sales_last_month = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Decimal field for last month's profit.
+    sales_this_year = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Decimal field for current year's profit.
     shop_created_at = models.DateTimeField(auto_now_add=True)  # Timestamp for when the shop was created.
     about_shop = models.TextField(blank=True, null=True)  # Optional text field for shop description.
     how_old_is_the_shop = models.IntegerField(default=0)  # Field for tracking the age of the shop.
     is_verified = models.BooleanField(default=False)  # Boolean field for shop verification status.
     is_active = models.BooleanField(default=True)  # Boolean field indicating if the shop is active.
-    shop_physical_address = models.CharField(max_length=255, blank=True, null=True, help_text="The physical location of the shop.")  # Optional field for the shop's physical address.
-    shop_items_adders = models.ManyToManyField(User, related_name='added_items_shops', blank=True, help_text="Users who have added items to the shop.")  # Many-to-many relationship with users who added items to the shop.
+    # shop_product_adders = models.ManyToManyField(User, related_name='added_items_shops', blank=True, help_text="Users who have added items to the shop.")  # Many-to-many relationship with users who added items to the shop.
+    # shop_analytics_viewers = models.ManyToManyField(User, related_name='viewed_shop_analytics', blank=True, help_text="Users who have viewed shop analytics.")  # Many-to-many relationship with users who viewed shop analytics.
 
     def save(self, *args, **kwargs):
         """
@@ -277,6 +274,7 @@ class Review(models.Model):
                                                       MaxValueValidator(5)])
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     review_images = models.JSONField(default=list, blank=True)  # Store
     # URLs or file paths of images
     class Meta:
