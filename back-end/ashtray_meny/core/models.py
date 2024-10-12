@@ -1,7 +1,7 @@
 # Import essential Django modules for model creation and validation.
 from django.db import models  # Core Django ORM module to define models.
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-# AbstractBaseUser: For custom user models. 
+# AbstractBaseUser: For custom user models.
 # PermissionsMixin: For handling user permissions.
 
 from django.core.exceptions import ValidationError  # Raise validation errors.
@@ -12,7 +12,7 @@ from django.utils import timezone  # Utility to manage date and time fields.
 import uuid  # Module to generate unique UUID identifiers.
 
 # Import custom validators (assumed to be defined in the project).
-from validators import validate_image_size, validate_password_strength
+from core.validators import validate_image_size, validate_password_strength
 
 
 # UserManager class handles user creation and management operations.
