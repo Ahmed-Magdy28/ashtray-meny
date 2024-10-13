@@ -1,7 +1,7 @@
 from django.test import TestCase  # Django's built-in test framework.
 from django.core.exceptions import ValidationError  # For handling validation errors.
 from django.utils import timezone  # To manage timestamps.
-from .models import User, Shop, Product, Category, Order, Review  # Import models to be tested.
+from core.models import User, Shop, Product, Category  # Import models to be tested.
 
 class UserModelTest(TestCase):
     """Tests for the User model."""
@@ -17,7 +17,7 @@ class UserModelTest(TestCase):
     def test_create_user(self):
         """Test that a user is created successfully."""
         self.assertEqual(self.user.email, 'user@example.com')
-        self.assertTrue(self.user.check_password('securepassword123'))
+        self.assertTrue(self.user.check_password('Securepassword123'))
         self.assertFalse(self.user.is_staff)
 
     def test_create_superuser(self):
@@ -25,7 +25,7 @@ class UserModelTest(TestCase):
         admin_user = User.objects.create_superuser(
             email='admin@example.com',
             username='admin',
-            password='supersecurepassword123'
+            password='Supersecurepassword123'
         )
         self.assertTrue(admin_user.is_staff)
         self.assertTrue(admin_user.is_superuser)
@@ -44,7 +44,7 @@ class ShopModelTest(TestCase):
         self.user = User.objects.create_user(
             email='shopowner@example.com',
             username='shopowner',
-            password='password123'
+            password='Sassword123!'
         )
         self.shop = Shop.objects.create(
             shop_name='Test Shop',
@@ -70,7 +70,7 @@ class ProductModelTest(TestCase):
         self.user = User.objects.create_user(
             email='shopowner@example.com',
             username='shopowner',
-            password='password123'
+            password='Password123!'
         )
         self.shop = Shop.objects.create(
             shop_name='Test Shop',
@@ -156,7 +156,7 @@ class ReviewModelTest(TestCase):
         self.user = User.objects.create_user(
             email='customer@example.com',
             username='customer',
-            password='password123'
+            password='Password123!'
         )
         self.shop = Shop.objects.create(
             shop_name='Test Shop',

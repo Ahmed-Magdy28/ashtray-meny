@@ -160,11 +160,29 @@ class Shop(models.Model):
         return self.shop_name
 
 
+# Category model to store product categories.
+class Category(models.Model):
+    """Model representing product categories."""
+
+    # UUID for unique category identification.
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    # Category name with uniqueness constraint.
+    category_name = models.CharField(max_length=100, unique=True)
+
+    # Optional description of the category.
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        """String representation of the Category instance."""
+        return self.category_name
+
+
+
 # Product model representing individual products.
 class Product(models.Model):
     """Model representing a product in a shop."""
 
-    # Product status choices.
     class ProductStatus(models.TextChoices):
         ACTIVE = 'active', 'Active'
         INACTIVE = 'inactive', 'Inactive'
@@ -197,10 +215,12 @@ class Product(models.Model):
 
     # Foreign keys to the shop and category.
     shop = models.ForeignKey(Shop, related_name='shop_products', on_delete=models.CASCADE)
-    category = models.ForeignKey('Category', related_name='category_products', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='category_products', on_delete=models.CASCADE)
 
     def __str__(self):
         """String representation of the Product instance."""
         return self.product_name
+
+
 
 
