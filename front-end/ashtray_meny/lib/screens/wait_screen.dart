@@ -15,7 +15,7 @@ class _WaitingScreenState extends State<WaitingScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: Colors.blueGrey,
+        color: Colors.red,
         child: Center(
           child: SizedBox(
             child: Column(
@@ -27,7 +27,8 @@ class _WaitingScreenState extends State<WaitingScreen> {
                     onPressed: () {
                       Routes.openLogin(context: context);
                     },
-                    child: const Text("signIn screen")),
+                    child: const Text("signIn screen",
+                        style: TextStyle(color: Colors.white))),
                 TextButton(
                     onPressed: () {
                       Routes.openSignUp(context: context);

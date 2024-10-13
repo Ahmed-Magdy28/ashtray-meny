@@ -11,15 +11,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.blue, Colors.blueGrey])),
+        body: Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.blueGrey, Colors.lightBlue])),
+      child: SingleChildScrollView(
         child: Center(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -34,33 +34,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const Padding(
                   padding: EdgeInsets.all(12.0),
                   child: TextField(
-                    decoration: InputDecoration(label: Text("Email")),
+                    decoration: InputDecoration(labelText: "Email"),
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(12.0),
                   child: TextField(
                     decoration: InputDecoration(
                         labelText: "UserName", hintText: "username"),
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(12.0),
                   child: TextField(
-                    decoration: InputDecoration(hintText: "Password"),
+                    decoration: InputDecoration(
+                        labelText: "Password", hintText: "Password"),
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(12.0),
                   child: TextField(
-                    decoration: InputDecoration(hintText: "Confirm Password"),
+                    decoration: InputDecoration(
+                        labelText: "Confirm Password",
+                        hintText: "Confirm Password"),
                   ),
                 ),
                 const SizedBox(height: 20),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("already have an account?")),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                    style: const ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll<Color>(Colors.blue)),
+                    style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.blue)),
                     onPressed: () {},
                     child: const Text(
                       "Sign Up",
