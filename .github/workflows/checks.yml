@@ -37,5 +37,5 @@ jobs:
             python manage.py test"
 
       - name: Lint
-        working-directory: ./back-end # Change to the back-end directory
+        working-directory: ./back-end/ashtray_meny # Change to the back-end directory
         run: docker-compose run --rm app sh -c "pycodestyle ."
