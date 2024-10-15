@@ -37,17 +37,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+            'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
-    'rest_framework',
-    'drf_spectacular',
-    'user',
-]
+    'core',  # Your core app
+    'rest_framework',  # Django REST Framework
+    'drf_spectacular',  # API documentation with Swagger
+    'user',  # User management
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
