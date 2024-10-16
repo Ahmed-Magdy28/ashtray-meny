@@ -1,0 +1,10 @@
+
+# Activate the virtual environment (Linux/Mac)
+source back-end/.env/django101/bin/activate
+
+# Activate the virtual environment (Windows)
+# .env/Django101\Scripts\activate
+
+# To deactivate (disable) the virtual environment, simply run the following command:
+# On Linux/Mac/Windows:
+deactivate
