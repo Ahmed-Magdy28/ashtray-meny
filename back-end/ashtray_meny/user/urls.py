@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from user import views
+from rest_framework_simplejwt.views import TokenRefreshView
 
 router = DefaultRouter()
 router.register('users', views.UserViewSet)           # Handles /api/users/
@@ -12,6 +13,8 @@ router.register('orders', views.OrderViewSet)         # Handles /api/orders/
 router.register('wishlists', views.WishListViewSet)   # Handles /api/wishlists/
 
 urlpatterns = [
-    path('', include(router.urls)),
-    # Includes all the registered routes under /api/
+    path('', include(router.urls)),  # Include all the registered routes
+    path('user/create/', views.CreateUserView.as_view(), name='user-create'),  # User registration
+    path('user/login/', views.LoginView.as_view(), name='user-login'),  # User login (JWT)
+    path('user/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),  # Token refresh for JWT
 ]
