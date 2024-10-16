@@ -12,11 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from os import environ
 from pathlib import Path
-<<<<<<< HEAD
-from datetime import timedelta  # Import for setting token expiration time
-=======
 from datetime import timedelta
->>>>>>> 94804f4ed6063b87ebe95b7a3b01238a09fdfb7f
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,17 +33,17 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-            'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',  # Your core app
-    'rest_framework',  # Django REST Framework
-    'drf_spectacular',  # API documentation with Swagger
-    'user',  # User management
-    ]
+    'core',
+    'rest_framework',
+    'drf_spectacular',
+    'user',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,26 +137,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
-<<<<<<< HEAD
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Enable JWT authentication
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # Default permission: authenticated users only
-    ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
-
-# Configure JWT settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Access token validity period
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Refresh token validity period
-    'ROTATE_REFRESH_TOKENS': True,  # Rotate refresh tokens upon use
-    'BLACKLIST_AFTER_ROTATION': True,  # Blacklist old tokens after refresh
-    'AUTH_HEADER_TYPES': ('Bearer',),  # Token prefix in the Authorization header
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-}
-=======
 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -174,4 +150,3 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
->>>>>>> 94804f4ed6063b87ebe95b7a3b01238a09fdfb7f
