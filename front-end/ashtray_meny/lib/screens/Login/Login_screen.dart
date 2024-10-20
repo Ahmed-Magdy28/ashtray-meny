@@ -1,6 +1,9 @@
 import 'package:ashtray_meny/classes/routes.dart';
+import 'package:ashtray_meny/controllers/login_controller.dart';
 import 'package:ashtray_meny/widgets/password_field.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +16,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>(); // For form validation
+
+  final dio = Dio();
+  var logger = Logger();
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState?.validate() == true) {
-                        // Perform login action
+                        // Call the login function
+                        LoginController.login(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
