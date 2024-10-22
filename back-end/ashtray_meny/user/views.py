@@ -44,7 +44,24 @@ class UserViewSet(viewsets.ModelViewSet):
     """ViewSet for managing user CRUD operations."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'unique_id'  # Use unique_id instead of default pk
+
+    def update(self, request, *args, **kwargs):
+        """Custom update method to handle password hashing and user updates."""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        # If 'password' is provided in the request, hash it before saving
+        if 'password' in request.data:
+            instance.set_password(request.data['password'])
+            request.data.pop('password')
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Other ViewSets...
 

@@ -1,3 +1,4 @@
+import 'package:ashtray_meny/widgets/navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class ShopScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class _ShopScreenState extends State<ShopScreen> {
       body: Center(
         child: Text("ShopScreen"),
       ),
+      bottomNavigationBar: MyNavigationBar(),
     );
   }
 }

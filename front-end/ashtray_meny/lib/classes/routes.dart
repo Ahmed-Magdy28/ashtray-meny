@@ -1,3 +1,4 @@
+import 'package:ashtray_meny/screens/shop/shop_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ashtray_meny/screens/Login/forget_password_screen.dart';
 import 'package:ashtray_meny/screens/Login/login_screen.dart';
@@ -20,7 +21,8 @@ class Routes {
         const end = 1.0;
         const curve = Curves.easeInOut;
 
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return FadeTransition(
           opacity: animation.drive(tween),
@@ -84,6 +86,11 @@ class Routes {
     await prefs.remove('auth_token');
     await prefs.remove('user_id');
 
-    Navigator.of(context).pushReplacement(_createFadeRoute(const LoginScreen()));
+    Navigator.of(context)
+        .pushReplacement(_createFadeRoute(const LoginScreen()));
+  }
+
+  static void toUserShop({required BuildContext context}) {
+    Navigator.of(context).push(_createFadeRoute(const ShopScreen()));
   }
 }

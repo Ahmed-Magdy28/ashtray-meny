@@ -4,7 +4,7 @@ import 'package:ashtray_meny/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-
+import 'package:ashtray_meny/controllers/login_controller.dart'; // Import LoginController
 
 void main() {
   runApp(
@@ -33,21 +33,30 @@ class _MyAppState extends State<MyApp> {
     _checkLoginStatus();
   }
 
-  // Check if the token exists in SharedPreferences
+  // Check if the token exists and redirect appropriately
   Future<void> _checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('auth_token');
-    String? userId = prefs.getString('user_id');
+    bool loggedIn = await LoginController.isLoggedIn();
 
-    if (token != null && userId != null) {
-      // Token exists, fetch user data and auto-login
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      userProvider.getUserData(dataSnapShot: {
-        'token': token,
-        'user_id': userId,
-      });
+    if (loggedIn) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('auth_token');
+      String? userId = prefs.getString('user_id');
+
+      if (token != null && userId != null) {
+        // Fetch user data and auto-login
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.getUserData(dataSnapShot: {
+          'token': token,
+          'user_id': userId,
+        });
+        setState(() {
+          isLoggedIn = true;
+        });
+      }
+    } else {
+      // No token, direct to login screen
       setState(() {
-        isLoggedIn = true;
+        isLoggedIn = false;
       });
     }
   }
@@ -56,8 +65,8 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: isLoggedIn
-          ? const MainScreen()
-          : const LoginScreen(), // Show HomeScreen if logged in
+          ? const MainScreen() // Show HomeScreen if logged in
+          : const LoginScreen(), // Show LoginScreen if not logged in
     );
   }
 }

@@ -166,41 +166,6 @@ class AddressManager(models.Manager):
     def create_address(self, user, street, city, postal_code, country):
         return self.create(user=user, street=street, city=city, postal_code=postal_code, country=country)
 
-
-
-class User(AbstractBaseUser, PermissionsMixin):
-    """
-    Custom User model extending AbstractUser with additional fields.
-
-    This model allows for user accounts with an email address as the username
-    and includes an optional personal description field.
-    """
-    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
-    email = models.EmailField(max_length=255, unique=True)
-    username = models.CharField(max_length=255, unique=True, db_index=True)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    shop_owner = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)
-    user_image = models.ImageField(upload_to='users/', blank=True, null=True,
-                                   validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
-    user_age = models.IntegerField(null=True, blank=True)
-    default_address = models.ForeignKey('Address', related_name='default_user', on_delete=models.SET_NULL, null=True, blank=True)
-    created_in = models.DateTimeField(default=timezone.now)
-    orders_completed = models.IntegerField(default=0)
-    orders_now = models.IntegerField(default=0)
-    password_updated_at = models.DateTimeField(auto_now=True)
-    about_user = models.TextField(blank=True, null=True)
-
-    objects = UserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    def __str__(self):
-        return self.email  # Return email address for user representation.
-
-
 class Shop(models.Model):
     """
     Model representing a shop.
@@ -213,13 +178,13 @@ class Shop(models.Model):
     """
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     shop_name = models.CharField(max_length=255, unique=True)
-    shop_owner = models.ForeignKey(User, related_name='owned_shops', on_delete=models.CASCADE)
+    shop_owner = models.ForeignKey('User', related_name='owned_shops', on_delete=models.CASCADE)
     shop_image = models.ImageField(upload_to='shops/', blank=True, null=True,
                                    validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
     shop_background_image = models.ImageField(upload_to='shop_backgrounds/', blank=True, null=True,
                                               validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
-    category = models.ManyToManyField('Category', related_name='shop_categories')
-    best_sellers = models.ManyToManyField('Product', related_name='shop_best_sellers')
+    category = models.ManyToManyField('Category', related_name='shop_categories', blank=True)
+    best_sellers = models.ManyToManyField('Product', related_name='shop_best_sellers', blank=True)
     shop_views = models.IntegerField(default=0)
     shop_reviews_is_on = models.BooleanField(default=True)
     monthly_sold_items = models.IntegerField(default=0)
@@ -234,6 +199,43 @@ class Shop(models.Model):
 
     def __str__(self):
         return self.shop_name  # Return the name of the shop for representation.
+
+class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Custom User model extending AbstractUser with additional fields.
+    """
+    unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
+    email = models.EmailField(max_length=255, unique=True)
+    username = models.CharField(max_length=255, unique=True, db_index=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    shop_owner = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+
+    user_image = models.ImageField(upload_to='users/', blank=True, null=True,
+                                   validators=[validate_image_size, FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
+    user_age = models.IntegerField(null=True, blank=True)
+    default_address = models.ForeignKey('Address', related_name='default_user', on_delete=models.SET_NULL, null=True, blank=True)
+    created_in = models.DateTimeField(default=timezone.now)
+    orders_completed = models.IntegerField(default=0)
+    orders_now = models.IntegerField(default=0)
+    password_updated_at = models.DateTimeField(auto_now=True)
+    about_user = models.TextField(blank=True, null=True)
+
+    # New fields
+    user_country = models.CharField(max_length=100, blank=True, null=True)  # Country as string
+    user_shop = models.OneToOneField(Shop, null=True, blank=True, on_delete=models.SET_NULL)  # One-to-one relationship with Shop
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.email  # Return email address for user representation.
+
+
+
 
 class Product(models.Model):
     """

@@ -1,8 +1,10 @@
 import 'package:ashtray_meny/classes/routes.dart';
+import 'package:ashtray_meny/controllers/profile_controller.dart';
 import 'package:ashtray_meny/widgets/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ashtray_meny/providers/user_provider.dart';
+import 'package:dio/dio.dart'; // For making API requests
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,6 +28,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Profile'),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'shop_owner') {
+                  if (!userProvider.isShopOwner) {
+                    ProfileController.turnToShopOwner(
+                        context: context); // Become shop owner
+                  } else {
+                    ProfileController.goToUserShop(
+                        context: context); // Go to shop
+                  }
+                }
+              },
+              itemBuilder: (BuildContext context) {
+                return [
+                  if (!userProvider.isShopOwner)
+                    const PopupMenuItem<String>(
+                      value: 'shop_owner',
+                      child: Text('Become Shop Owner'),
+                    )
+                  else
+                    const PopupMenuItem<String>(
+                      value: 'shop_owner',
+                      child: Text('Go to Your Shop'),
+                    ),
+                ];
+              },
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           child: Padding(

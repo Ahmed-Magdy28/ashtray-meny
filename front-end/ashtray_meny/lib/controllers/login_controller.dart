@@ -1,3 +1,4 @@
+import 'package:ashtray_meny/classes/routes.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -10,20 +11,22 @@ class LoginController {
   // Logger instance
   static var logger = Logger();
 
-  static Future<Map<String, dynamic>?> login(
-      {required String email, required String password}) async {
+  // Login function
+  static Future<Map<String, dynamic>?> login({
+    required String email,
+    required String password,
+  }) async {
     Map<String, dynamic> data = {
       "email": email,
       "password": password,
     };
     try {
-      // Send POST request
+      // Send POST request for login
       Response response = await dio.post(
         'http://10.0.2.2:7128/api/user/login/',
         data: data,
       );
 
-      // Check the status code or the response body as needed
       if (response.statusCode == 200) {
         // Get the token and user_id
         final token = response.data['token'];
@@ -34,16 +37,23 @@ class LoginController {
         await prefs.setString('auth_token', token);
         await prefs.setString('user_id', userId);
 
-        return response
-            .data; // Assume the response data is a Map<String, dynamic>
+        return response.data;
       } else {
-        logger.e(response.statusCode);
+        logger.e("Login failed with status code: ${response.statusCode}");
         return null;
       }
     } catch (e) {
-      logger.e(e);
+      logger.e("Login error: $e");
       return null;
     }
+  }
+
+  // Function to check if a token exists in SharedPreferences
+  static Future<bool> isLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('auth_token');
+
+    return token != null;
   }
 
   // Load saved email and password from SharedPreferences
