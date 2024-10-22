@@ -64,3 +64,33 @@ Make sure you have the following installed on your system:
    git clone https://github.com/yourusername/ecommerce-platform.git
    cd ecommerce-platform
 
+2. **Create a virtual environment and install dependencies**:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   pip install -r requirements.txt
+
+3. **Set up PostgreSQL Database**:
+   - Create a PostgreSQL database:
+   ```sql
+   Set up PostgreSQL Database
+   ```
+   - Update the .env file with your database credentials:
+   ```plaintext
+   DB_NAME=ecommerce_db
+   DB_USER=your_db_user
+   DB_PASS=your_db_password
+   DB_HOST=localhost
+   DB_PORT=5432
+
+5. **Run database migrations**:
+   ```bash
+   python manage.py migrate
+
+6. **Create a superuser (admin)**:
+   ```bash
+   python manage.py createsuperuser
+
+7. **Access the application**:
+   - Admin panel: http://localhost:8000/admin/
+   - API documentation (Swagger): http://localhost:8000/api/docs/
