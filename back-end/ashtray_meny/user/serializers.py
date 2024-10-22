@@ -10,7 +10,11 @@ from django.utils.translation import gettext_lazy as _
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'username', 'password')
+        fields = [
+            'unique_id', 'email', 'username', 'user_image', 'user_age', 
+            'is_verified', 'is_staff', 'shop_owner', 'default_address', 
+            'orders_completed', 'orders_now', 'about_user', 'password'
+        ]  # Include all the required fields
         extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
     def create(self, validated_data):
@@ -21,7 +25,6 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return user
-
 
 
 
