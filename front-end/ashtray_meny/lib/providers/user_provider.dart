@@ -85,7 +85,8 @@ class UserProvider extends ChangeNotifier {
       ordersNow = dataSnapShot['orders_now'] ?? 0;
 
       // Check if the user has a shop and update provider with the shop details
-      if (dataSnapShot.containsKey('user_shop') && dataSnapShot['user_shop'] != null) {
+      if (dataSnapShot.containsKey('user_shop') &&
+          dataSnapShot['user_shop'] != null) {
         updateShopData(dataSnapShot['user_shop']);
       } else {
         clearShopData(); // Clear the shop data if no shop is found
@@ -117,7 +118,8 @@ class UserProvider extends ChangeNotifier {
         final userData = response.data;
         updateUserFromResponse(userData);
       } else {
-        logger.e('Failed to fetch user data. Status code: ${response.statusCode}');
+        logger.e(
+            'Failed to fetch user data. Status code: ${response.statusCode}');
       }
     } catch (e) {
       logger.e('Error fetching user data: $e');
@@ -139,17 +141,29 @@ class UserProvider extends ChangeNotifier {
     ordersCompleted = userData["orders_completed"] ?? 0;
     ordersNow = userData["orders_now"] ?? 0;
 
-    // Update userShopId with the shop ID, if available
-    shopId = userData['user_shop'] ?? null;
-
     // Check if the user has a shop and update shop data
-    if (userData.containsKey('user_shop') && userData['user_shop'] != null) {
-      updateShopData(userData['user_shop']);
+    if (userData.containsKey('user_shop')) {
+      // If user_shop is a string (shop ID), only update shopId
+      if (userData['user_shop'] is String) {
+        shopId = userData['user_shop'];
+      }
+      // If user_shop is a map, update shop data
+      else if (userData['user_shop'] is Map<String, dynamic>) {
+        updateShopData(userData['user_shop']);
+      } else {
+        clearShopData();
+      }
     } else {
       clearShopData();
     }
 
     notifyListeners(); // Notify listeners so UI can rebuild
+  }
+
+  // Method to update user_shop with the new shop ID
+  void updateUserShop(String newShopId) {
+    shopId = newShopId; // Update the shop ID
+    notifyListeners();
   }
 
   // Update shop-related data from shop creation response or user response
@@ -160,7 +174,7 @@ class UserProvider extends ChangeNotifier {
     shopBackgroundImage = shopData['shop_background_image'];
     shopViews = shopData['shop_views'];
     shopReviewsOn = shopData['shop_reviews_is_on'];
-    shopMonthlySoldItems = shopData['monthly_sold_items'];
+    shopMonthlySoldItems = shopData['shop_monthly_sold_items'];
     shopSalesThisMonth = shopData['shop_sales_this_month'];
     shopCreatedAt = DateTime.parse(shopData['shop_created_at']);
     shopAbout = shopData['shop_about'];
@@ -217,12 +231,12 @@ class UserProvider extends ChangeNotifier {
   }
 
   // Function to save the user with a shop ID (e.g., after shop creation)
-  static Future<void> saveTheShopUser({required BuildContext context}) async {
+  Future<void> saveTheShopUser({required BuildContext context}) async {
     try {
       final response = await dio.patch(
         'http://10.0.2.2:7128/api/users/$userId/',
         data: {
-          'user_shop': userShop, // Save the shop ID in the user's profile
+          'user_shop': shopId, // Save the shop ID in the user's profile
         },
         options: Options(headers: {
           'Authorization': 'Bearer $userToken',
@@ -230,7 +244,7 @@ class UserProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        // Successfully updated user_shop, update the provider with the new user data
+        // Successfully updated user_shop, update the provider with new user data
         updateUserFromResponse(response.data);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Shop linked to user successfully')),

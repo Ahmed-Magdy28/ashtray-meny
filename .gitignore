@@ -155,7 +155,9 @@ ipython_config.py
 .env/
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
-
+category_images/
+products/
+media/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid

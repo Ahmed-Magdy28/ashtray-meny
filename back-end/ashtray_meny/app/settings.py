@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from os import environ
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -108,7 +109,12 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+# Define the base directory of the project
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Media settings
+MEDIA_URL = '/media/'  # This is the URL prefix where media files will be served
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # This is the directory on the file system where uploaded files are stored
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
