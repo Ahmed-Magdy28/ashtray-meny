@@ -9,7 +9,11 @@ import 'package:ashtray_meny/screens/profile/profile_screen.dart';
 import 'package:ashtray_meny/screens/settings/menu_screen.dart';
 import 'package:ashtray_meny/screens/settings/settings_screen.dart';
 import 'package:ashtray_meny/screens/shop/cart_screen.dart';
+import 'package:ashtray_meny/screens/shop/create_user_shop_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:ashtray_meny/providers/user_provider.dart';
+
 
 class Routes {
   // Fade transition animation (default)
@@ -81,16 +85,24 @@ class Routes {
   }
 
   // Logout method - clears session and navigates to Login
-  static Future<void> logout({required BuildContext context}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
-    await prefs.remove('user_id');
+static Future<void> logout({required BuildContext context}) async {
+  // Clear SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.clear();  // Clear all data in SharedPreferences
 
-    Navigator.of(context)
-        .pushReplacement(_createFadeRoute(const LoginScreen()));
-  }
+  // Reset the UserProvider (clearing all user data)
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  userProvider.resetUserData();  // Reset user data in the provider
+
+  // Navigate to the Login screen
+  Navigator.of(context)
+      .pushReplacement(_createFadeRoute(const LoginScreen()));
+}
 
   static void toUserShop({required BuildContext context}) {
     Navigator.of(context).push(_createFadeRoute(const ShopScreen()));
+  }
+  static void toCreateShopScreen({required BuildContext context}) {
+    Navigator.of(context).push(_createFadeRoute(const CreateUserShopScreen()));
   }
 }

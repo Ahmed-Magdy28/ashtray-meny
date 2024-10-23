@@ -20,56 +20,60 @@ class _CreateUserShopScreenState extends State<CreateUserShopScreen> {
     super.dispose();
   }
 
-  Future<void> _createShop() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final String shopName = _shopNameController.text.trim();
+ Future<void> _createShop() async {
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  final String shopName = _shopNameController.text.trim();
 
-    if (shopName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a shop name')),
-      );
-      return;
-    }
-
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      final response = await Dio().post(
-        'http://127.0.0.1:7128/api/shops/',
-        data: {
-          'shop_name': shopName,
-          'shop_owner': userProvider.userId, // User ID from provider
-        },
-        options: Options(headers: {
-          'Authorization': 'Bearer ${userProvider.userToken}', // Token from provider
-        }),
-      );
-
-      if (response.statusCode == 201) {
-        final shopData = response.data;
-
-        // Update the UserProvider with the new shop data
-        userProvider.updateShopData(shopData);
-
-        // Navigate to the shop screen
-        Navigator.pushReplacementNamed(context, '/shop'); // Implement the ShopScreen route
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to create shop')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
+  if (shopName.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please enter a shop name')),
+    );
+    return;
   }
+
+  setState(() {
+    isLoading = true;
+  });
+
+  try {
+    final response = await Dio().post(
+      'http://10.0.2.2:7128/api/shops/',
+      data: {
+        'shop_name': shopName,
+        'shop_owner': userProvider.userId, // User ID from provider
+      },
+      options: Options(headers: {
+        'Authorization': 'Bearer ${userProvider.userToken}', // Token from provider
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final shopData = response.data;
+
+      // Update the UserProvider with the new shop data
+      userProvider.updateShopData(shopData);
+
+      // Update the user_shop field in UserProvider with the new shop ID
+      userProvider.updateUserShop(shopData['unique_id']);
+      userProvider.saveTheShopUser(context: context); // Save the shop ID to the user
+
+      // Navigate to the shop screen
+      Navigator.pushReplacementNamed(context, '/shop'); // Implement the ShopScreen route
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to create shop')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  } finally {
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {

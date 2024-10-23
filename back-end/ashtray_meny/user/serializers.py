@@ -11,11 +11,16 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'unique_id', 'email', 'username', 'user_image', 'user_age', 
-            'is_verified', 'is_staff', 'shop_owner', 'default_address', 
-            'orders_completed', 'orders_now', 'about_user', 'password'
-        ]  # Include all the required fields
-        extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
+            'unique_id', 'email', 'username', 'user_image', 'user_age',
+            'is_verified', 'is_staff', 'shop_owner', 'default_address',
+            'orders_completed', 'orders_now', 'about_user', 'password',
+            'user_country', 'user_shop'
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True, 'min_length': 8},
+            'user_country': {'required': False},
+            'user_shop': {'required': False}
+        }
 
     def create(self, validated_data):
         """Override the default create method to handle password hashing."""
@@ -25,7 +30,6 @@ class UserSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return user
-
 
 
 class LoginSerializer(serializers.Serializer):
