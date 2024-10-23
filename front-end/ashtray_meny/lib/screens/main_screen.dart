@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:ashtray_meny/widgets/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:ashtray_meny/providers/user_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -25,6 +28,20 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _fetchCategories();
     _fetchProducts();
+  }
+
+  Future<void> _addToCart(dynamic product) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? cartItems = prefs.getString('cart');
+    List<dynamic> cart = cartItems != null ? json.decode(cartItems) : [];
+
+    cart.add(product);
+
+    await prefs.setString('cart', json.encode(cart));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${product['product_name']} added to cart')),
+    );
   }
 
   Future<void> _fetchCategories() async {
@@ -207,8 +224,8 @@ class _MainScreenState extends State<MainScreen> {
           Expanded(
             child: Center(
               child: ElevatedButton(
-                  onPressed: () {
-                    //add to cart function
+                  onPressed: () async {
+                    await _addToCart(product);
                   },
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all(Colors.blue),
