@@ -11,9 +11,9 @@ class UserViewSetTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(email='user@example.com', username='user', password='password123')
+        self.user = User.objects.create_user(email='user@example.com', username='user', password='Password123!')
         self.client.force_authenticate(user=self.user)  # Authenticate client for authenticated requests
-        self.user_data = {'email': 'newuser@example.com', 'username': 'newuser', 'password': 'password123'}
+        self.user_data = {'email': 'newuser@example.com', 'username': 'newuser', 'password': 'Password123!'}
 
     def test_list_users_authenticated(self):
         """Test listing users as an authenticated user."""
@@ -44,7 +44,7 @@ class ProductViewSetTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(email='shopowner@example.com', username='shopowner', password='password123')
+        self.user = User.objects.create_user(email='shopowner@example.com', username='shopowner', password='Password123!')
         self.client.force_authenticate(user=self.user)
         self.shop = Shop.objects.create(shop_name='Test Shop', shop_owner=self.user)
         self.category = Category.objects.create(category_name="Electronics")

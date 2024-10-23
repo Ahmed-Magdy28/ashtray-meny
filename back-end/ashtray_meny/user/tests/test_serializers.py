@@ -16,7 +16,7 @@ class UserSerializerTest(APITestCase):
         self.user_data = {
             'email': 'testuser@example.com',
             'username': 'testuser',
-            'password': 'password123',
+            'password': 'Password123!',
             'user_age': 25
         }
 
@@ -26,14 +26,14 @@ class UserSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
         self.assertEqual(user.email, self.user_data['email'])
-        self.assertTrue(user.check_password(self.user_data['password']))
+        self.assertTrue(user.check_password(self.user_data['Password123!']))
 
     def test_create_user_password_hashed(self):
         """Test that the password is hashed when creating a user."""
         serializer = UserSerializer(data=self.user_data)
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
-        self.assertNotEqual(user.password, self.user_data['password'])  # Password should be hashed
+        self.assertNotEqual(user.password, self.user_data['Password123!'])  # Password should be hashed
 
 
 class LoginSerializerTest(APITestCase):
@@ -43,11 +43,11 @@ class LoginSerializerTest(APITestCase):
 
     def setUp(self):
         # Use a valid password that meets the strength criteria (with an uppercase letter)
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123')
+        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123!')
 
     def test_login_user(self):
         """Test logging in a user with correct credentials."""
-        data = {'email': 'testuser@example.com', 'password': 'Password123'}
+        data = {'email': 'testuser@example.com', 'password': 'Password123!'}
         response = self.client.post(reverse('user-login'), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('token', response.data)
@@ -66,7 +66,7 @@ class ShopSerializerTest(APITestCase):
     """
 
     def setUp(self):
-        self.user = User.objects.create_user(email='shopowner@example.com', username='shopowner', password='password123')
+        self.user = User.objects.create_user(email='shopowner@example.com', username='shopowner', password='Password123!')
         self.shop_data = {
             'shop_name': 'Test Shop',
             'shop_owner': self.user
@@ -87,7 +87,7 @@ class ProductSerializerTest(APITestCase):
     """
 
     def setUp(self):
-        self.user = User.objects.create_user(email='shopowner@example.com', username='shopowner', password='password123')
+        self.user = User.objects.create_user(email='shopowner@example.com', username='shopowner', password='Password123!')
         self.shop = Shop.objects.create(shop_name='Test Shop', shop_owner=self.user)
         self.category = Category.objects.create(category_name='Electronics')
         self.product_data = {
@@ -127,7 +127,7 @@ class ReviewSerializerTest(APITestCase):
     """
 
     def setUp(self):
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='password123')
+        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123!')
         self.shop = Shop.objects.create(shop_name='Test Shop', shop_owner=self.user)
         self.category = Category.objects.create(category_name='Electronics')
         self.product = Product.objects.create(product_name='Test Product', shop=self.shop, category=self.category, price=99.99)
@@ -153,7 +153,7 @@ class OrderSerializerTest(APITestCase):
 
     def setUp(self):
         # Use a valid password that meets the strength criteria
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123')
+        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123!')
         self.order_data = {
             'user': self.user.id,
             'total_amount': 100.00
@@ -174,7 +174,7 @@ class WishListSerializerTest(APITestCase):
     """
 
     def setUp(self):
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='password123')
+        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123!')
         self.shop = Shop.objects.create(shop_name='Test Shop', shop_owner=self.user)
         self.category = Category.objects.create(category_name='Electronics')
         self.product = Product.objects.create(product_name='Test Product', shop=self.shop, category=self.category, price=99.99)
