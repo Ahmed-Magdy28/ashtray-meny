@@ -38,32 +38,26 @@ class UserSerializerTest(APITestCase):
 
 class LoginSerializerTest(APITestCase):
     """
-    Test the LoginSerializer, ensuring correct user authentication and JWT token retrieval.
+    Test logging in users using the LoginSerializer.
     """
 
     def setUp(self):
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='password123')
-        self.login_data = {
-            'email': 'testuser@example.com',
-            'password': 'password123'
-        }
+        # Use a valid password that meets the strength criteria (with an uppercase letter)
+        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123')
 
     def test_login_user(self):
         """Test logging in a user with correct credentials."""
-        serializer = LoginSerializer(data=self.login_data)
-        self.assertTrue(serializer.is_valid())
-        user = serializer.validated_data['user']
-        self.assertEqual(user.email, self.user.email)
+        data = {'email': 'testuser@example.com', 'password': 'Password123'}
+        response = self.client.post(reverse('user-login'), data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn('token', response.data)
 
     def test_invalid_credentials(self):
         """Test logging in with invalid credentials should fail."""
-        invalid_data = {
-            'email': 'testuser@example.com',
-            'password': 'wrongpassword'
-        }
-        serializer = LoginSerializer(data=invalid_data)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn('non_field_errors', serializer.errors)
+        data = {'email': 'testuser@example.com', 'password': 'wrongpassword'}
+        response = self.client.post(reverse('user-login'), data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 
 class ShopSerializerTest(APITestCase):
@@ -158,7 +152,8 @@ class OrderSerializerTest(APITestCase):
     """
 
     def setUp(self):
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='password123')
+        # Use a valid password that meets the strength criteria
+        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123')
         self.order_data = {
             'user': self.user.id,
             'total_amount': 100.00
@@ -170,6 +165,7 @@ class OrderSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         order = serializer.save()
         self.assertEqual(order.total_amount, self.order_data['total_amount'])
+
 
 
 class WishListSerializerTest(APITestCase):
