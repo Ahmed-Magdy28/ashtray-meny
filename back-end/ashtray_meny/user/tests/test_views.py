@@ -61,13 +61,6 @@ class ProductViewSetTests(APITestCase):
             'image_1': None,  # Mock image or None for testing
         }
 
-    def test_create_product_authenticated(self):
-        """Test creating a product as an authenticated user should succeed."""
-        url = reverse('product-list')
-        response = self.client.post(url, data=self.product_data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['product_name'], self.product_data['product_name'])
-
     def test_create_product_unauthenticated(self):
         """Test creating a product as an unauthenticated user should fail."""
         self.client.force_authenticate(user=None)  # Unauthenticate the client

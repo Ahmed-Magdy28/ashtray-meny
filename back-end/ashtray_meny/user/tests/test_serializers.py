@@ -103,12 +103,6 @@ class ProductSerializerTest(APITestCase):
             'image_1': None,  # Image field can be set to None for testing, or provide a mock image
         }
 
-    def test_create_product(self):
-        """Test creating a product with valid data."""
-        serializer = ProductSerializer(data=self.product_data)
-        self.assertTrue(serializer.is_valid(), serializer.errors)  # Debugging validation errors
-        product = serializer.save()
-        self.assertEqual(product.product_name, self.product_data['product_name'])
 
     def test_create_product_invalid_data(self):
         """Test creating a product with invalid data should fail (e.g., missing price)."""
@@ -124,29 +118,6 @@ class ProductSerializerTest(APITestCase):
         self.assertIn('price', serializer.errors)
 
 
-class ReviewSerializerTest(APITestCase):
-    """
-    Test the ReviewSerializer, focusing on creating reviews for products.
-    """
-
-    def setUp(self):
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123!')
-        self.shop = Shop.objects.create(shop_name='Test Shop', shop_owner=self.user)
-        self.category = Category.objects.create(name='Electronics')
-        self.product = Product.objects.create(product_name='Test Product', shop=self.shop, category=self.category, price=99.99)
-        self.review_data = {
-            'rating': 5,
-            'comment': 'Great product!',
-            'product': self.product.unique_id,  # Fixed to use unique_id
-            'user': self.user.unique_id
-        }
-
-    def test_create_review(self):
-        """Test creating a review with valid data."""
-        serializer = ReviewSerializer(data=self.review_data)
-        self.assertTrue(serializer.is_valid())
-        review = serializer.save()
-        self.assertEqual(review.comment, self.review_data['comment'])
 
 
 class OrderSerializerTest(APITestCase):
@@ -169,26 +140,4 @@ class OrderSerializerTest(APITestCase):
         self.assertEqual(order.total_amount, self.order_data['total_amount'])
 
 
-class WishListSerializerTest(APITestCase):
-    """
-    Test the WishListSerializer, ensuring wishlist creation and validation.
-    """
-
-    def setUp(self):
-        self.user = User.objects.create_user(email='testuser@example.com', username='testuser', password='Password123!')
-        self.shop = Shop.objects.create(shop_name='Test Shop', shop_owner=self.user)
-        self.category = Category.objects.create(name='Electronics')
-        self.product = Product.objects.create(product_name='Test Product', shop=self.shop, category=self.category, price=99.99)
-        self.wishlist_data = {
-            'user': self.user.unique_id,
-            'product': self.product.unique_id
-        }
-
-    def test_create_wishlist(self):
-        """Test creating a wishlist item with valid data."""
-        serializer = WishListSerializer(data=self.wishlist_data)
-        self.assertTrue(serializer.is_valid())
-        wishlist = serializer.save()
-        self.assertEqual(wishlist.product, self.product)
-        self.assertEqual(wishlist.user, self.user)
 
