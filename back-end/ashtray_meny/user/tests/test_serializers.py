@@ -98,6 +98,9 @@ class ProductSerializerTest(APITestCase):
             'quantity_available': 10,
             'shop': self.shop.unique_id,  # Fixed shop to use unique_id
             'category': self.category.unique_id  # Fixed category to use unique_id
+            'dimensions': '10x10x10 cm',  # Add missing field
+            'weight': 1.5,  # Add missing field
+            'image_1': None,  # Image field can be set to None for testing, or provide a mock image
         }
 
     def test_create_product(self):

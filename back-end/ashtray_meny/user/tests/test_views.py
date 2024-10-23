@@ -56,6 +56,9 @@ class ProductViewSetTests(APITestCase):
             'quantity_available': 50,
             'shop': self.shop.unique_id,  # Fixed shop to use unique_id
             'category': self.category.unique_id  # Fixed category to use unique_id
+            'dimensions': '10x10x10 cm',  # Add missing field
+            'weight': 1.5,  # Add missing field
+            'image_1': None,  # Mock image or None for testing
         }
 
     def test_create_product_authenticated(self):
@@ -74,7 +77,14 @@ class ProductViewSetTests(APITestCase):
 
     def test_create_product_invalid_data(self):
         """Test creating a product with invalid data (missing fields) should fail."""
-        invalid_product_data = {'product_name': 'Product without price'}  # Missing required fields
+        invalid_product_data = {
+                'product_name': 'Product without price', # Missing required fields
+                'short_description': 'Short description',
+                'quantity_available': 50,
+                'shop': self.shop.unique_id,
+                'category': self.category.unique_id
+                }
+
         url = reverse('product-list')
         response = self.client.post(url, data=invalid_product_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
