@@ -89,8 +89,9 @@ class ProductSerializerTest(APITestCase):
             'product_name': 'Invalid Product',
             'short_description': 'No price here',
             'quantity_available': 10,
-            'shop': self.shop.id,
+            'shop': self.shop.unique_id,
             'category': self.category.id
         }
-        serializer = ProductSerializer(data=invalid_product
-
+        serializer = ProductSerializer(data=invalid_product_data)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('price', serializer.errors)
