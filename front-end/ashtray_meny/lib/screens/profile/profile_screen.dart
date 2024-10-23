@@ -4,7 +4,6 @@ import 'package:ashtray_meny/widgets/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ashtray_meny/providers/user_provider.dart';
-import 'package:dio/dio.dart'; // For making API requests
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,6 +13,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  Future<void> _refreshUserData() async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.fetchCompleteUserData(userProvider.userId, userProvider.userToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Access the UserProvider to get user data
@@ -33,11 +37,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onSelected: (value) {
                 if (value == 'shop_owner') {
                   if (!userProvider.isShopOwner) {
-                    ProfileController.turnToShopOwner(
-                        context: context); // Become shop owner
+                    ProfileController.turnToShopOwner(context: context); // Become shop owner
                   } else {
-                    ProfileController.goToUserShop(
-                        context: context); // Go to shop
+                    ProfileController.goToUserShop(context: context); // Go to shop
                   }
                 }
               },
@@ -58,105 +60,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Profile Picture
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: userProvider.userImage.isNotEmpty
-                      ? NetworkImage(userProvider.userImage)
-                      : const AssetImage('assets/images/default_avatar.png')
-                          as ImageProvider, // Default image if no profile picture
-                ),
-                const SizedBox(height: 16),
-
-                // User Name
-                Text(
-                  userProvider.userName.isNotEmpty
-                      ? userProvider.userName
-                      : 'User Name',
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+        body: RefreshIndicator(
+          onRefresh: _refreshUserData,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(), // Ensures scrolling even when content is short
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // Profile Picture
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: userProvider.userImage.isNotEmpty
+                        ? NetworkImage(userProvider.userImage)
+                        : const AssetImage('assets/images/default_avatar.png')
+                            as ImageProvider, // Default image if no profile picture
                   ),
-                ),
-                const SizedBox(height: 8),
+                  const SizedBox(height: 16),
 
-                // User Email
-                Text(
-                  userProvider.userEmail.isNotEmpty
-                      ? userProvider.userEmail
-                      : 'No Email Provided',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // User Country
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.location_on, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    Text(
-                      userProvider.userCountry.isNotEmpty
-                          ? userProvider.userCountry
-                          : 'No Country Specified',
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // About User
-                if (userProvider.aboutUser.isNotEmpty) ...[
-                  const Text(
-                    'About Me',
-                    style: TextStyle(
-                      fontSize: 18,
+                  // User Name
+                  Text(
+                    userProvider.userName.isNotEmpty
+                        ? userProvider.userName
+                        : 'User Name',
+                    style: const TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
+
+                  // User Email
                   Text(
-                    userProvider.aboutUser,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
+                    userProvider.userEmail.isNotEmpty
+                        ? userProvider.userEmail
+                        : 'No Email Provided',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
                   ),
                   const SizedBox(height: 16),
-                ],
 
-                // Orders Summary
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildSummaryTile(
-                      title: 'Orders Completed',
-                      value: userProvider.ordersCompleted.toString(),
+                  // User Country
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.blue),
+                      const SizedBox(width: 8),
+                      Text(
+                        userProvider.userCountry.isNotEmpty
+                            ? userProvider.userCountry
+                            : 'No Country Specified',
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // About User
+                  if (userProvider.aboutUser.isNotEmpty) ...[
+                    const Text(
+                      'About Me',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    _buildSummaryTile(
-                      title: 'Current Orders',
-                      value: userProvider.ordersNow.toString(),
+                    const SizedBox(height: 8),
+                    Text(
+                      userProvider.aboutUser,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
                     ),
+                    const SizedBox(height: 16),
                   ],
-                ),
-                const SizedBox(height: 32),
 
-                // Edit Profile Button
-                ElevatedButton(
-                  onPressed: () {
-                    Routes.toEditProfile(context: context);
-                  },
-                  child: const Text('Edit Profile'),
-                ),
-              ],
+                  // Orders Summary
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildSummaryTile(
+                        title: 'Orders Completed',
+                        value: userProvider.ordersCompleted.toString(),
+                      ),
+                      _buildSummaryTile(
+                        title: 'Current Orders',
+                        value: userProvider.ordersNow.toString(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Edit Profile Button
+                  ElevatedButton(
+                    onPressed: () {
+                      Routes.toEditProfile(context: context);
+                    },
+                    child: const Text('Edit Profile'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

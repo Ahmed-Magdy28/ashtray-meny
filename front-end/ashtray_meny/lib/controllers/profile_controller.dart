@@ -43,11 +43,16 @@ class ProfileController {
   }
 
   // Navigate to the user's shop (placeholder function, implement accordingly)
-  static void goToUserShop({required BuildContext context}) {
-    // You can define the route to the user's shop here
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Navigating to your shop...')),
-    );
-    Routes.toUserShop(context: context);
+static void goToUserShop({required BuildContext context}) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    // Check if the user already has a shop
+    if (userProvider.shopId != null && userProvider.shopId!.isNotEmpty) {
+      // User has a shop, navigate to the shop screen
+      Routes.toUserShop(context: context); // Implement the route for the user's shop
+    } else {
+      // User does not have a shop, navigate to the shop creation screen
+      Routes.toCreateShopScreen(context: context); // Implement the route for shop creation
+    }
   }
 }

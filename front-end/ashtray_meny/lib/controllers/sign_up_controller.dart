@@ -20,6 +20,7 @@ class SignupController {
       "email": email,
       "username": username,
       "password": password,
+      "user_country": country,
     };
 
     try {

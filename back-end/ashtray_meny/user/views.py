@@ -57,6 +57,10 @@ class UserViewSet(viewsets.ModelViewSet):
             instance.set_password(request.data['password'])
             request.data.pop('password')
 
+        # Check if 'user_shop' is provided in the request and update it
+        if 'user_shop' in request.data:
+            instance.user_shop_id = request.data['user_shop']  # Update user_shop
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
