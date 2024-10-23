@@ -55,7 +55,7 @@ class ProductViewSetTests(APITestCase):
             'price': '10.99',
             'quantity_available': 50,
             'shop': self.shop.unique_id,  # Fixed shop to use unique_id
-            'category': self.category.unique_id  # Fixed category to use unique_id
+            'category': self.category.unique_id,  # Fixed category to use unique_id
             'dimensions': '10x10x10 cm',  # Add missing field
             'weight': 1.5,  # Add missing field
             'image_1': None,  # Mock image or None for testing
